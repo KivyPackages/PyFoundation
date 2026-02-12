@@ -50,8 +50,8 @@ import PySwiftWrapper
 """)
 extension Progress: PySerializing.PySerialize {
     
-    func pyPointer() -> PyPointer {
-        .None
+    public func pyPointer() -> PyPointer {
+        Self.asPyPointer(self)
     }
 }
 
@@ -62,37 +62,40 @@ extension Progress: PySerializing.PySerialize {
 
     //open func hasRepresentationConforming(toTypeIdentifier typeIdentifier: String, fileOptions: NSItemProviderFileOptions = []) -> Bool
 
-    open func loadDataRepresentation(forTypeIdentifier typeIdentifier: String, completionHandler: @escaping @Sendable (Data?, (any Error)?) -> Void) -> Progress
+    //open func loadDataRepresentation(forTypeIdentifier typeIdentifier: String, completionHandler: @escaping @Sendable (Data?, (any Error)?) -> Void) -> Progress
 
-    open func loadFileRepresentation(forTypeIdentifier typeIdentifier: String, completionHandler: @escaping @Sendable (URL?, (any Error)?) -> Void) -> Progress
+    //open func loadFileRepresentation(forTypeIdentifier typeIdentifier: String, completionHandler: @escaping @Sendable (URL?, (any Error)?) -> Void) -> Progress
 
-    open func loadInPlaceFileRepresentation(forTypeIdentifier typeIdentifier: String, completionHandler: @escaping @Sendable (URL?, Bool, (any Error)?) -> Void) -> Progress
+    //open func loadInPlaceFileRepresentation(forTypeIdentifier typeIdentifier: String, completionHandler: @escaping @Sendable (URL?, Bool, (any Error)?) -> Void) -> Progress
 
 """)
 extension NSItemProvider: PySerializing.PySerialize {
     
-//    @PyMethod
-//    func loadDataRepresentation(typeIdentifier: String, completionHandler: @escaping @Sendable (Data?, (any Error)?) -> Void) -> Progress {
-//        
-//        loadDataRepresentation(forTypeIdentifier: typeIdentifier, completionHandler: completionHandler)
-//    }
-//    
-//    @PyMethod
-//    func loadFileRepresentation(typeIdentifier: String, completionHandler: @escaping (URL?, (any Error)?) -> Void) -> Progress {
-//        loadFileRepresentation(forTypeIdentifier: typeIdentifier, completionHandler: completionHandler)
-//    }
-//    
-//    @PyMethod
-//    func loadInPlaceFileRepresentation(typeIdentifier: String, completionHandler: @escaping (URL?, Bool, (any Error)?) -> Void) -> Progress {
-//        loadInPlaceFileRepresentation(forTypeIdentifier: typeIdentifier, completionHandler: completionHandler)
-//    }
+    
+    func loadDataRepresentation(typeIdentifier: String, completionHandler: @escaping @Sendable (Data?, (String)?) -> Void) -> Progress {
+        loadDataRepresentation(forTypeIdentifier: typeIdentifier) { data, err in
+            completionHandler(data, err?.localizedDescription)
+        }
+    }
+    
+    func loadFileRepresentation(typeIdentifier: String, completionHandler: @escaping @Sendable (URL?, (String)?) -> Void) -> Progress {
+        loadFileRepresentation(forTypeIdentifier: typeIdentifier) { url, err in
+            completionHandler(url, err?.localizedDescription)
+        }
+    }
+    
+    func loadInPlaceFileRepresentation(typeIdentifier: String, completionHandler: @escaping @Sendable (URL?, Bool, (String)?) -> Void) -> Progress {
+        loadInPlaceFileRepresentation(forTypeIdentifier: typeIdentifier) { url, state, err in
+            completionHandler(url, state, err?.localizedDescription)
+        }
+    }
     
     func registerDataRepresentation(typeIdentifier: String, visibility: NSItemProviderRepresentationVisibility, loader: @escaping @Sendable (@escaping (Data?, (any Error)?) -> Void) -> Progress?) {
         registerDataRepresentation(forTypeIdentifier: typeIdentifier, visibility: visibility, loadHandler: loader)
     }
     
     public func pyPointer() -> PyPointer {
-        self.asPyPointer(self
+        Self.asPyPointer(self)
     }
     
 }
